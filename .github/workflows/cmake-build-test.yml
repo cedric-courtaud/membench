@@ -27,6 +27,8 @@ jobs:
     
     - name: Setup build directory
       run: |
+        echo ${PWD} ${GITHUB_WORKSPACE}
+        ls
         mkdir build-github
         cd build-github
     
