@@ -26,21 +26,19 @@ jobs:
       run: git submodule update --init
     
     - name: Setup build directory
-      run: |
-        echo ${PWD} ${GITHUB_WORKSPACE}
-        ls
-        mkdir build-github
-        cd build-github
+      run: mkdir build-github
     
     - name: Run CMake
       run: |
-        echo ${PWD} ${GITHUB_WORKSPACE}
-        ls
-        ls ..
+        cd build-github
         cmake ..
     
     - name: Build project
-      run: make
+      run: |
+        cd build-github
+        make
       
     - name: Run tests
-      run: make test
+      run: |
+        cd build-github
+        make test
