@@ -13,3 +13,6 @@ cd build
 cmake ..
 make 
 ```
+## License
+
+This software is released under MIT license.
