@@ -33,7 +33,11 @@ jobs:
         cd build-github
     
     - name: Run CMake
-      run: cmake ..
+      run: |
+        echo ${PWD} ${GITHUB_WORKSPACE}
+        ls
+        ls ..
+        cmake ..
     
     - name: Build project
       run: make
