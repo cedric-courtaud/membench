@@ -22,8 +22,9 @@ namespace membench {
 
         RandomArrayIterator() = default;
 
-        void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8) {
-            it.init(array, array_size, n_steps, stride);
+        void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8,
+                  size_t left_interleaving_offset=0, size_t right_interleaving_offset=0) {
+            it.init(array, array_size, n_steps, stride, left_interleaving_offset, right_interleaving_offset);
         }
 
         FORCE_INLINE int read () {

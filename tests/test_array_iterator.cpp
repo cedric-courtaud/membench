@@ -120,4 +120,105 @@ TEST(ArrayIterator, RandomArrayIteratorMLP) {
     ASSERT_TRUE(value <= 4);
 }
 
+TEST(ArrayIterator, LinearInterleaving1) {
+    volatile int array[8] = {0};
+    membench::LinearArrayIterator<1> i1;
+    membench::LinearArrayIterator<1> i2;
+    i1.init(array, 8, 2, 1, 0, 2);
+    i2.init(array, 8, 2, 1, 2, 0);
+
+    i1.write(1);
+    i2.write(2);
+    i1.write(1);
+    i2.write(2);
+
+    ASSERT_EQ(array[0], 1);
+    ASSERT_EQ(array[1], 1);
+    ASSERT_EQ(array[4], 1);
+    ASSERT_EQ(array[5], 1);
+
+    ASSERT_EQ(array[2], 2);
+    ASSERT_EQ(array[3], 2);
+    ASSERT_EQ(array[6], 2);
+    ASSERT_EQ(array[7], 2);
+}
+
+TEST(ArrayIterator, LinearInterleaving2) {
+    volatile int array[8] = {0};
+    membench::LinearArrayIterator<1> i1;
+    membench::LinearArrayIterator<1> i2;
+    i1.init(array, 8, 2, 1, 0, 2);
+    i2.init(array, 8, 2, 1, 2, 0);
+
+    i1.write(1);
+    i1.write(1);
+
+    auto v = i2.read() + i2.read();
+
+    ASSERT_EQ(array[0], 1);
+    ASSERT_EQ(array[1], 1);
+    ASSERT_EQ(array[4], 1);
+    ASSERT_EQ(array[5], 1);
+
+    ASSERT_EQ(v, 0);
+}
+
+TEST(ArrayIterator, LinearInterleavingMLP1) {
+    volatile int array[16] = {0};
+    membench::LinearArrayIterator<4> i1;
+    membench::LinearArrayIterator<4> i2;
+    i1.init(array, 16, 4, 1, 0, 4);
+    i2.init(array, 16, 4, 1, 4, 0);
+
+    i1.write(1);
+    i2.write(2);
+    i1.write(1);
+    i2.write(2);
+
+    ASSERT_EQ(array[0], 1);
+    ASSERT_EQ(array[4], 1);
+    ASSERT_EQ(array[8], 1);
+    ASSERT_EQ(array[12], 1);
+
+    ASSERT_EQ(array[1], 2);
+    ASSERT_EQ(array[5], 2);
+    ASSERT_EQ(array[9], 2);
+    ASSERT_EQ(array[13], 2);
+
+    ASSERT_EQ(array[2], 1);
+    ASSERT_EQ(array[6], 1);
+    ASSERT_EQ(array[10], 1);
+    ASSERT_EQ(array[14], 1);
+
+    ASSERT_EQ(array[3], 2);
+    ASSERT_EQ(array[7], 2);
+    ASSERT_EQ(array[11], 2);
+    ASSERT_EQ(array[15], 2);
+}
+
+TEST(ArrayIterator, LinearInterleavingMLP2) {
+    volatile int array[16] = {0};
+    membench::LinearArrayIterator<4> i1;
+    membench::LinearArrayIterator<4> i2;
+    i1.init(array, 16, 4, 1, 0, 4);
+    i2.init(array, 16, 4, 1, 4, 0);
+
+    i1.write(1);
+    i1.write(1);
+
+    auto v = i2.read() + i2.read();
+
+    ASSERT_EQ(array[0], 1);
+    ASSERT_EQ(array[4], 1);
+    ASSERT_EQ(array[8], 1);
+    ASSERT_EQ(array[12], 1);
+
+    ASSERT_EQ(array[2], 1);
+    ASSERT_EQ(array[6], 1);
+    ASSERT_EQ(array[10], 1);
+    ASSERT_EQ(array[14], 1);
+
+    ASSERT_EQ(v, 0);
+}
+
 #pragma clang diagnostic pop

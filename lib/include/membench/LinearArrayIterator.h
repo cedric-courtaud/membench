@@ -19,14 +19,17 @@ namespace membench {
 
         LinearArrayIterator() = default;
 
-        void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8) {
-            it.init(array, array_size, n_steps, stride);
+        void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8,
+            size_t left_interleaving_offset=0, size_t right_interleaving_offset=0) {
+                it.init(array, array_size, n_steps, stride, left_interleaving_offset, right_interleaving_offset);
         }
 
         FORCE_INLINE int read () {
             auto ret = 0;
 
-            for (auto _ = 0; _ < it.n_steps; _++){
+            it.pos = (it.pos + it.left_interleaving_offset) % it.row_length;
+
+            for (auto _ = 0; _ < it.n_steps; _ += MLP){
                 auto offset = 0;
 
                 SWITCH_MLP(MLP, ({
@@ -40,12 +43,16 @@ namespace membench {
 
                 it.pos = (it.pos + it.stride) % it.row_length;
             }
+
+            it.pos = (it.pos + it.right_interleaving_offset);
 
             return ret;
         }
 
         FORCE_INLINE void write(int value) {
-            for (auto _ = 0; _ < it.n_steps; _++){
+            it.pos = (it.pos + it.left_interleaving_offset) % it.row_length;
+
+            for (auto _ = 0; _ < it.n_steps; _ += MLP){
                 auto offset = 0;
 
                 SWITCH_MLP(MLP, ({
@@ -59,6 +66,8 @@ namespace membench {
 
                 it.pos = (it.pos + it.stride) % it.row_length;
             }
+
+            it.pos = it.pos + it.right_interleaving_offset;
         }
     };
 }

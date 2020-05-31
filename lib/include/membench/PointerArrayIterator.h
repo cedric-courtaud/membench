@@ -19,10 +19,17 @@ namespace membench {
         size_t p_array_size = 0;
         size_t pos = 0;
         size_t n_steps = 0;
+        size_t left_interleaving_offset = 0;
+        size_t right_interleaving_offset = 0;
 
         PointerArrayIterator() = default;
 
-        void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8) {
+        void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8,
+                  size_t left_interleaving_offset=0, size_t right_interleaving_offset=0) {
+
+            this->left_interleaving_offset = (left_interleaving_offset * stride) / MLP;
+            this->right_interleaving_offset = (right_interleaving_offset * stride) / MLP;
+
             this->array = array;
             this->n_steps = n_steps;
 
@@ -34,10 +41,31 @@ namespace membench {
 
             this->p_array = new volatile int*[this->p_array_size];
 
-            for (auto i = 0; i < array_size; i += stride) {
-                auto col_offset = (i % MLP) * MLP;
-                auto row_offset = i / MLP / stride;
-                p_array[col_offset + row_offset] = &array[i];
+            auto row_offset = 0;
+            const auto row_length = array_size / MLP;
+            auto col_offset = 0;
+            auto step_count = 0;
+            for (auto i = 0; i < p_array_size; i++) {
+                col_offset %= row_length;
+                if ((step_count % n_steps) == 0) {
+                    col_offset += this->left_interleaving_offset;
+                }
+
+                p_array[i] = &array[row_offset + col_offset];
+
+                row_offset += row_length;
+                row_offset %= array_size;
+
+                step_count++;
+                step_count %= n_steps;
+
+                if ((step_count % MLP) == 0) {
+                    col_offset += stride;
+                }
+
+                if (step_count == 0) {
+                    col_offset += this->right_interleaving_offset;
+                }
             }
         }
 
