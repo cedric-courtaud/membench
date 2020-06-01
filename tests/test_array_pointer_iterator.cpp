@@ -98,16 +98,16 @@ TEST(PointerArrayIterator, RandomArrayIteratorNotShared) {
 }
 
 TEST(PointerArrayIterator, RandomArrayIteratorMLP) {
-    volatile int array[16] = {0};
+    volatile int array[32] = {0};
     membench::RandomPointerArrayIterator<4> writer;
 
-    writer.init(array, 16, 4, 1);
+    writer.init(array, 32, 8, 1);
     writer.write(1);
 
-    ASSERT_EQ(array[0]  + array [1]  + array[2]  + array[3],  1);
-    ASSERT_EQ(array[4]  + array [5]  + array[6]  + array[7],  1);
-    ASSERT_EQ(array[8]  + array [9]  + array[10] + array[11], 1);
-    ASSERT_EQ(array[12] + array [13] + array[14] + array[15], 1);
+    ASSERT_EQ(array[0]  + array [1]  + array[2]  + array[3] +array[4]  + array [5]  + array[6]  + array[7],  2);
+    ASSERT_EQ(array[8]  + array [9]  + array[10]  + array[11] +array[12]  + array [13]  + array[14]  + array[15],  2);
+    ASSERT_EQ(array[16]  + array [17]  + array[18]  + array[19] +array[20]  + array [21]  + array[22]  + array[23],  2);
+    ASSERT_EQ(array[24]  + array [25]  + array[26]  + array[27] +array[28]  + array [29]  + array[30]  + array[31],  2);
 
     membench::RandomPointerArrayIterator<4> reader;
     reader.init(array, 16, 4, 1);

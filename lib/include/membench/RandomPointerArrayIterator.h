@@ -13,23 +13,27 @@
 
 namespace membench {
 
-    template<typename T>
-    void shuffle_array(T * array, size_t array_size) {
-        std::default_random_engine generator;
-        std::uniform_int_distribution<int> distribution(0,array_size);
-
-        for (auto i = 0;i < array_size - 1; i++) {
-            auto j = i + (distribution(generator) % (array_size - i));
-            auto tmp = array[i];
-            array[i] = array[j];
-            array[j] = tmp;
-        }
-    }
-
     template<int MLP>
     struct RandomPointerArrayIterator {
         PointerArrayIterator<MLP> it;
         static constexpr int mlp = MLP;
+
+        template<typename T>
+        void shuffle_array(T * array, size_t array_size) {
+            std::default_random_engine generator;
+            std::uniform_int_distribution<int> distribution(0,array_size);
+
+            auto row_length = array_size / MLP;
+
+            for (auto i=0; i < row_length - 1; i++) {
+                for (auto m=1; m <= mlp; m++) {
+                    auto j = i + (distribution(generator) % (row_length - i));
+                    auto tmp = array[i];
+                    array[i] = array[m * j];
+                    array[m * j] = tmp;
+                }
+            }
+        }
 
         void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8,
                   size_t left_interleaving_offset=0, size_t right_interleaving_offset=0) {
