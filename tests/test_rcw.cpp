@@ -12,17 +12,16 @@
 #include <membench/LinearPointerArrayIterator.h>
 
 TEST(RCW, NoInterleaving) {
-    membench::MemBenchParams p = {
-            .n_read = 1,
-            .n_write = 1,
-            .throttle = 0,
-            .array_size_B = 8 * sizeof(int),
-            .memory_fill_value = 1,
-            .interleaved = false,
-            .stride = 1,
-            .max_count = 8,
-            .as_load = false
-    };
+    membench::MemBenchParams p;
+    p.n_read = 1;
+    p.n_write = 1;
+    p.throttle = 0;
+    p.array_size_B = 8 * sizeof(int);
+    p.memory_fill_value = 1;
+    p.interleaved = false;
+    p.stride = 1;
+    p.max_count = 8;
+    p.as_load = false;
 
     membench::RCW<membench::LinearArrayIterator<1>, membench::Computer, membench::LinearArrayIterator<1>> t;
 
@@ -40,17 +39,17 @@ TEST(RCW, NoInterleaving) {
 }
 
 TEST(RCW, Interleaving) {
-    membench::MemBenchParams p = {
-            .n_read = 1,
-            .n_write = 1,
-            .throttle = 0,
-            .array_size_B = 8 * sizeof(int),
-            .memory_fill_value = 1,
-            .interleaved = true,
-            .stride = 1,
-            .max_count = 8,
-            .as_load = false
-    };
+    membench::MemBenchParams p;
+
+    p.n_read = 1;
+    p.n_write = 1;
+    p.throttle = 0;
+    p.array_size_B = 8 * sizeof(int);
+    p.memory_fill_value = 1;
+    p.interleaved = true;
+    p.stride = 1;
+    p.max_count = 8;
+    p.as_load = false;
 
     membench::RCW<membench::LinearArrayIterator<1>, membench::Computer, membench::LinearArrayIterator<1>> t;
 
@@ -69,17 +68,17 @@ TEST(RCW, Interleaving) {
 
 
 TEST(RCW, InterleavingDifferentMLPException) {
-    membench::MemBenchParams p = {
-            .n_read = 1,
-            .n_write = 1,
-            .throttle = 0,
-            .array_size_B = 8 * sizeof(int),
-            .memory_fill_value = 1,
-            .interleaved = true,
-            .stride = 1,
-            .max_count = 8,
-            .as_load = false
-    };
+    membench::MemBenchParams p;
+
+    p.n_read = 1;
+    p.n_write = 1;
+    p.throttle = 0;
+    p.array_size_B = 8 * sizeof(int);
+    p.memory_fill_value = 1;
+    p.interleaved = true;
+    p.stride = 1;
+    p.max_count = 8;
+    p.as_load = false;
 
     membench::RCW<membench::LinearArrayIterator<4>, membench::Computer, membench::LinearArrayIterator<1>> t;
     ASSERT_THROW(t.init(p), membench::DifferentMLPInterleavingException);
