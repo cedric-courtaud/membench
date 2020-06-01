@@ -19,6 +19,7 @@ namespace membench {
     template <int MLP>
     struct RandomArrayIterator {
         ArrayIterator<MLP> it;
+        static constexpr int mlp = MLP;
 
         RandomArrayIterator() = default;
 

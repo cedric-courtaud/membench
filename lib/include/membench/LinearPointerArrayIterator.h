@@ -13,6 +13,7 @@ namespace membench {
     template<int MLP>
     struct LinearPointerArrayIterator {
         PointerArrayIterator<MLP> it;
+        static constexpr int mlp = MLP;
 
         void init(volatile int * array, size_t array_size, size_t n_steps, size_t stride=8,
                   size_t left_interleaving_offset=0, size_t right_interleaving_offset=0) {

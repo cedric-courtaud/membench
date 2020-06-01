@@ -23,7 +23,7 @@ namespace membench {
         std::string access_policy;
         size_t array_size_B = (1u << 20u);
         int memory_fill_value = 1;
-        bool interleaved = false; // ignored for now
+        bool interleaved = false;
         size_t stride = 8;
         size_t max_count = 0;
         bool as_load = false;

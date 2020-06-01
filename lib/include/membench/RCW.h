@@ -11,13 +11,13 @@
 #include "MemBenchParams.h"
 
 namespace membench {
+    MB_EXCEPTION(DifferentMLPInterleavingException, "Trying to interleave two iterator with different MLP value");
+
+
     template<class Reader, class Computer, class Writer>
     class RCW : public MemBenchInstance {
         size_t max_count = 0;
         bool as_load = false;
-        size_t n_read = 0;
-        size_t n_write = 0;
-        volatile int * memory = nullptr;
         unsigned int n_compute = 0;
 
         Reader reader;
@@ -26,11 +26,13 @@ namespace membench {
 
     public:
         RCW() = default;
+        volatile int * memory = nullptr;
 
         void init(MemBenchParams & p) override {
             // Initialize memory
             size_t array_size = p.array_size_B / sizeof(*memory);
             memory = (typeof memory) malloc(p.array_size_B);
+
             if (!memory) {
                 perror("RCW malloc");
                 exit(EXIT_FAILURE);
@@ -38,17 +40,22 @@ namespace membench {
 
             std::fill_n(memory, array_size, p.memory_fill_value);
 
-            // INIT READER and WRITER
-            reader.init(memory, array_size, p.n_read, p.stride);
-            writer.init(memory, array_size, p.n_write, p.stride);
+            // INIT READER AND WRITER
+            if (p.interleaved) {
+                if (reader.mlp != writer.mlp) {
+                    throw DifferentMLPInterleavingException();
+                }
+                reader.init(memory, array_size, p.n_read,  p.stride, 0, p.n_write);
+                writer.init(memory, array_size, p.n_write, p.stride, p.n_read, 0);
+            } else {
+                auto s = array_size / 2;
+
+                reader.init(memory, s, p.n_read, p.stride,  0, 0);
+                writer.init(memory + s, s, p.n_write, p.stride, 0, 0);
+            }
 
             // INIT COMPUTER
             n_compute = p.throttle * (p.n_read + p.n_write);
-
-            // INTERLEAVE READER AND WRITER
-            if (p.interleaved) {
-                // TODO manage interleaving
-            }
 
             // ITERATION COUNT
             max_count = (p.max_count == 0) ? (array_size / p.stride) : p.max_count;
@@ -61,7 +68,7 @@ namespace membench {
             for (auto _ = 0; _ < max_count; _ += reader.it.n_steps + writer.it.n_steps) {
                 ret += reader.read();
 
-                ret += computer.compute(n_compute, ret);
+                ret = computer.compute(n_compute, ret);
 
                 writer.write(ret);
             }
