@@ -2,6 +2,7 @@
 
 #include <membench/MemBenchParams.h>
 #include <membench/cli.h>
+#include <membench/RCW.h>
 
 #include "instances.h"
 
@@ -17,8 +18,12 @@ int main(int argc, char ** argv) {
     }
 
     auto v = it->second;
-
-    v->init(p);
+    try {
+        v->init(p);
+    } catch (membench::DifferentMLPInterleavingException & e) {
+        std::cerr << "Trying to interleave iterators with different MLP values. Aborting..." << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     auto value = v->run();
 
