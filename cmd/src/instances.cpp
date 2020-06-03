@@ -11,6 +11,8 @@
 #include <membench/RandomArrayIterator.h>
 #include <membench/LinearPointerArrayIterator.h>
 #include <membench/RandomPointerArrayIterator.h>
+#include <membench/LinearListIterator.h>
+#include <membench/RandomListIterator.h>
 
 using namespace membench;
 
@@ -27,6 +29,12 @@ std::map<const std::string, std::shared_ptr<MemBenchInstance> > instances = {
         __MBI_ENTRY("random-p-p-1-1",    RCW<RandomPointerArrayIterator<1>, Computer, RandomPointerArrayIterator<1>>),
         __MBI_ENTRY("gather-p-p-1-1",    RCW<RandomPointerArrayIterator<1>, Computer, LinearPointerArrayIterator<1>>),
         __MBI_ENTRY("scatter-p-p-1-1",   RCW<LinearPointerArrayIterator<1>, Computer, RandomPointerArrayIterator<1>>),
+
+        // LIST
+        __MBI_ENTRY("linear-l-l-1-1",    RCW<LinearListIterator<1>, Computer, LinearListIterator<1>>),
+        __MBI_ENTRY("random-l-l-1-1",    RCW<RandomListIterator<1>, Computer, RandomListIterator<1>>),
+        __MBI_ENTRY("gather-l-l-1-1",    RCW<RandomListIterator<1>, Computer, LinearListIterator<1>>),
+        __MBI_ENTRY("scatter-l-l-1-1",   RCW<LinearListIterator<1>, Computer, RandomListIterator<1>>),
 
         // Stream generalizations
         // --- parallel arrays read / single array write
