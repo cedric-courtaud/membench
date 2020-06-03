@@ -19,5 +19,7 @@ endmacro()
 
 package_add_test_with_libraries(test_array_iterator test_array_iterator.cpp mbl)
 package_add_test_with_libraries(test_array_pointer_iterator test_array_pointer_iterator.cpp mbl)
+package_add_test_with_libraries(test_list_iterator test_list_iterator.cpp mbl)
+
 package_add_test_with_libraries(test_cli test_cli.cpp mbl)
 package_add_test_with_libraries(test_rcw test_rcw.cpp mbl)
