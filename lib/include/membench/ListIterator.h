@@ -8,7 +8,7 @@
 #include "macros.h"
 
 namespace membench {
-    MB_EXCEPTION(ZeroPointerArraySize, "Pointer array size is 0");
+    MB_EXCEPTION(ZeroListNodePoolSize, "List nodes pool size is 0");
 
     template<typename T>
     struct ListHead {
@@ -59,7 +59,7 @@ namespace membench {
             this->pos = &list_nodes[0];
 
             if (this->p_array_size == 0) {
-                throw ZeroPointerArraySize();
+                throw ZeroListNodePoolSize();
             }
 
             auto row_offset = 0;
